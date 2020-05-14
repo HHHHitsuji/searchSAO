@@ -10,11 +10,11 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #################CONFIG##################
 
-api_key = "Your api_key"
+api_key = ""
 EnableRename = False
 minsim = '80!'  # forcing minsim to 80 is generally safe for complex images, but may miss some edge cases. If images being checked are primarily low detail, such as simple sketches on white paper, increase this to cut down on false positives.
-your_username = 'aaaa'
-your_password = '123456'
+your_username = ''
+your_password = ''
 your_proxy = ''
 
 ##############END CONFIG#################
@@ -80,7 +80,7 @@ session = login()
 
 def downloadFromPixiv(image_id, session, page, member_id):
     session = session
-    page = int(page[-1])
+    page = int(page.split('p')[-1])
 
     head = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0',
@@ -273,14 +273,17 @@ for root, _, files in os.walk(u'.', topdown=False):
                                     sys.exit(2)
                             try:
                                 if member_id >= 0:
-                                    newfname = os.path.join(root, service_name + '_' + str(member_id) + '_' + str(
+                                    newfname = os.path.join('./index/', service_name + '_' + str(member_id) + '_' + str(
                                         illust_id) + page_string + '.' + fname.split(".")[-1].lower())
                                 else:
-                                    newfname = os.path.join(root,
+                                    newfname = os.path.join('./index/',
                                                             service_name + '_' + str(illust_id) + page_string + '.' +
                                                             fname.split(".")[-1].lower())
                                 print('New Name: ' + newfname)
-                                downloadFromPixiv(str(illust_id), session, page_string, member_id)
+                                if member_id >= 0:
+                                    downloadFromPixiv(str(illust_id), session, page_string, member_id)
+                                else:
+                                    downloadFromPixiv(str(illust_id), session, page_string, 0)
 
                             except Exception as e:
                                 print(e)
