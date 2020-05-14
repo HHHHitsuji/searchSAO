@@ -80,7 +80,10 @@ session = login()
 
 def downloadFromPixiv(image_id, session, page, member_id):
     session = session
-    page = int(page.split('p')[-1])
+    if page != '':
+        page = int(page.split('p')[-1])
+    else:
+        page = 0
 
     head = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0',
