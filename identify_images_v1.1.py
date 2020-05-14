@@ -248,25 +248,6 @@ for root, _, files in os.walk(u'.', topdown=False):
                                     service_name = 'pixiv'
                                     member_id = results['results'][0]['data']['member_id']
                                     illust_id = results['results'][0]['data']['pixiv_id']
-                                elif index_id == 8:
-                                    # 8->nico nico seiga
-                                    service_name = 'seiga'
-                                    member_id = results['results'][0]['data']['member_id']
-                                    illust_id = results['results'][0]['data']['seiga_id']
-                                elif index_id == 10:
-                                    # 10->drawr
-                                    service_name = 'drawr'
-                                    member_id = results['results'][0]['data']['member_id']
-                                    illust_id = results['results'][0]['data']['drawr_id']
-                                elif index_id == 11:
-                                    # 11->nijie
-                                    service_name = 'nijie'
-                                    member_id = results['results'][0]['data']['member_id']
-                                    illust_id = results['results'][0]['data']['nijie_id']
-                                elif index_id == 34:
-                                    # 34->da
-                                    service_name = 'da'
-                                    illust_id = results['results'][0]['data']['da_id']
                                 else:
                                     # unknown
                                     print('Unhandled Index! Exiting...')
