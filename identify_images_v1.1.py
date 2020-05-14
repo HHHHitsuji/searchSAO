@@ -103,7 +103,7 @@ def downloadFromPixiv(image_id, session, page, member_id):
                            proxies={'http': 'http://' + your_proxy, 'https': 'https://' + your_proxy})
     else:
         img_res = requests.get(original)
-    with open('D:/git_project/searchSAO/image/' + str(member_id) + '_' + image_id + '_p' + str(page) + '.jpg',
+    with open('./image/' + str(member_id) + '_' + image_id + '_p' + str(page) + '.jpg',
               'wb') as jpg:
         jpg.write(img_res.content)
 
