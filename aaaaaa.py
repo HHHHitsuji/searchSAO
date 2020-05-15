@@ -2,20 +2,19 @@ import logging
 import json
 import time
 import requests, re
+import os
 from saucenao import SauceNao
 from bs4 import BeautifulSoup
 
 
-api_key = 'f97b00f6ea3c0fe68b9d9568be351287859416e6'
-file_path = ['timg[4].jpg']
-
-your_username = 'wuwayway'
-your_password = '19940823'
-your_proxy = '127.0.0.1:10809'
+api_key = ''
+your_username = ''
+your_password = ''
+your_proxy = ''
 
 
 def getSauceNao(api_key):
-    saucenao = SauceNao(directory='.', databases=5, minimum_similarity=65, combine_api_types=False, api_key=api_key,
+    saucenao = SauceNao(directory='./input', databases=5, minimum_similarity=65, combine_api_types=False, api_key=api_key,
                         exclude_categories='', move_to_categories=False,  use_author_as_category=False,
                         output_type=SauceNao.API_JSON_TYPE, start_file='.', log_level=logging.ERROR,
                         title_minimum_similarity=60)
@@ -105,21 +104,32 @@ def downloadFromPixiv(image_id, page, session):
 
 
 if __name__ == '__main__':
+    file_path = []
+    for file in os.listdir('./input'):
+        file_path.append(file)
+    print(file_path)
     saucenao = getSauceNao(api_key)
-    image_id = ''
-    page = ''
+
     session = login()
-    for i in file_path:
-        print(i)
-        try:
-            image_id, page = getPixivID(i, saucenao)
-            print(image_id,page)
-        except Exception as e:
-            print(str(e))
-            time.sleep(3)
-        if image_id:
+    if file_path != []:
+        for i in file_path:
+            print("serach filename:{}".format(i))
+            image_id = ''
+            page = ''
             try:
-                downloadFromPixiv(image_id, page, session)
-                print("filename:./image/{}_{}".format(image_id,page))
+                image_id, page = getPixivID(i, saucenao)
+                print(image_id,page)
             except Exception as e:
-                print("fail")
+                print(str(e))
+                time.sleep(3)
+            if image_id:
+                try:
+                    downloadFromPixiv(image_id, page, session)
+                    print("output filename:./image/{}_{}".format(image_id,page))
+                except Exception as e:
+                    print("fail")
+
+            time.sleep(3)
+            print("=========================")
+    else:
+        print("input文件夹无图片")
