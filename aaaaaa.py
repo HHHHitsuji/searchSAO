@@ -7,11 +7,11 @@ from bs4 import BeautifulSoup
 
 
 api_key = 'f97b00f6ea3c0fe68b9d9568be351287859416e6'
-file_path = 'test.jpg'
+file_path = ['timg[4].jpg']
 
-your_username = ''
-your_password = ''
-your_proxy = ''
+your_username = 'wuwayway'
+your_password = '19940823'
+your_proxy = '127.0.0.1:10809'
 
 
 def getSauceNao(api_key):
@@ -23,9 +23,14 @@ def getSauceNao(api_key):
 
 
 def getPixivID(file_path, saucenao):
-    origin = saucenao.check_file(file_path)[0]['header']
 
-    return origin
+    if saucenao.check_file(file_path) == []:
+        raise Exception("查无此图")
+    origin = saucenao.check_file(file_path)[0]['header']
+    origin = origin['index_name'].split(' ')[-1].split('.jpg')[0]
+    origin = origin.split('_')
+
+    return origin[0], origin[1]
 
 
 def login():
@@ -69,12 +74,18 @@ def login():
     return session
 
 
-def downloadFromPixiv(image_id, session, page, member_id):
+def downloadFromPixiv(image_id, page, session):
     head = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0',
         'Referer': 'https://www.pixiv.net/artworks/' + image_id}
 
     url1 = 'https://www.pixiv.net/ajax/illust/' + image_id + '/pages'
+
+    if page != '':
+        page = int(page.split('p')[-1])
+    else:
+        page = 0
+
     if your_proxy != '':
         request = session.get(url1,
                             proxies={'http': 'http://' + your_proxy, 'https': 'https://' + your_proxy})
@@ -88,18 +99,27 @@ def downloadFromPixiv(image_id, session, page, member_id):
                            proxies={'http': 'http://' + your_proxy, 'https': 'https://' + your_proxy})
     else:
         img_res = requests.get(original)
-    with open('./image/' + str(member_id) + '_' + image_id + '_p' + str(page) + '.jpg',
+    with open('./image/' + image_id + '_p' + str(page) + '.jpg',
               'wb') as jpg:
         jpg.write(img_res.content)
 
 
 if __name__ == '__main__':
     saucenao = getSauceNao(api_key)
-    # session = login()
-    for i in range(5):
+    image_id = ''
+    page = ''
+    session = login()
+    for i in file_path:
+        print(i)
         try:
-            origin = getPixivID(file_path, saucenao)
+            image_id, page = getPixivID(i, saucenao)
+            print(image_id,page)
         except Exception as e:
             print(str(e))
             time.sleep(3)
-        print(origin)
+        if image_id:
+            try:
+                downloadFromPixiv(image_id, page, session)
+                print("filename:./image/{}_{}".format(image_id,page))
+            except Exception as e:
+                print("fail")
